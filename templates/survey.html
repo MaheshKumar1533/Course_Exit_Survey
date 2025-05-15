@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Course Exit Survey</title>
+		<link
+			rel="stylesheet"
+			href="{{ url_for('static', filename='css/styles.css') }}"
+		/>
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<script src="{{ url_for('static', filename='js/dynamic_form.js') }}"></script>
+	</head>
+	<body>
+		<div class="container">
+			<header>
+				<h1>MITS-CSE Course Exit Survey</h1>
+				<p>Please provide your valuable feedback about your courses</p>
+			</header>
+
+			<form method="POST" action="/submit">
+				<div class="form-group">
+					<label for="full_name">Full Name:</label>
+					<input
+						type="text"
+						name="full_name"
+						id="full_name"
+						required
+					/>
+				</div>
+
+				<div class="form-group">
+					<label for="roll_number">Roll Number:</label>
+					<input
+						type="text"
+						name="roll_number"
+						id="roll_number"
+						required
+					/>
+				</div>
+
+				<div class="form-group">
+					<label>Program Type:</label>
+					<div class="radio-group">
+						<div class="radio-option">
+							<input
+								type="radio"
+								id="program_ug"
+								name="program_type"
+								value="UG"
+								required
+							/>
+							<label for="program_ug">UG</label>
+						</div>
+						<div class="radio-option">
+							<input
+								type="radio"
+								id="program_pg"
+								name="program_type"
+								value="PG"
+							/>
+							<label for="program_pg">PG</label>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label>Department:</label>
+					<div class="radio-group">
+						<div class="radio-option">
+							<select name="department" id="department">
+								<option value="CSE">
+									Computer Science and Engineering
+								</option>
+							</select>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label>Year:</label>
+					<div class="radio-group">
+						<div class="radio-option">
+							<input
+								type="radio"
+								id="year_1"
+								name="year"
+								value="1"
+								required
+							/>
+							<label for="year_1">1st Year</label>
+						</div>
+						<div class="radio-option">
+							<input
+								type="radio"
+								id="year_2"
+								name="year"
+								value="2"
+							/>
+							<label for="year_2">2nd Year</label>
+						</div>
+						<div class="radio-option">
+							<input
+								type="radio"
+								id="year_3"
+								name="year"
+								value="3"
+							/>
+							<label for="year_3">3rd Year</label>
+						</div>
+						<div class="radio-option">
+							<input
+								type="radio"
+								id="year_4"
+								name="year"
+								value="4"
+							/>
+							<label for="year_4">4th Year</label>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label>Section:</label>
+					<div class="radio-group">
+						<div class="radio-option">
+							<input
+								type="radio"
+								id="section_a"
+								name="section"
+								value="A"
+								required
+							/>
+							<label for="section_a">A</label>
+						</div>
+						<div class="radio-option">
+							<input
+								type="radio"
+								id="section_b"
+								name="section"
+								value="B"
+							/>
+							<label for="section_b">B</label>
+						</div>
+						<div class="radio-option">
+							<input
+								type="radio"
+								id="section_c"
+								name="section"
+								value="C"
+							/>
+							<label for="section_c">C</label>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label for="academic_year">Academic Year:</label>
+					<input
+						type="text"
+						name="academic_year"
+						id="academic_year"
+						placeholder="e.g., 2024-2025"
+					/>
+				</div>
+
+				<hr />
+				<h3>General Questions</h3>
+				<div id="general-questions">
+					{% set default_questions = [ "Course Outcomes explained",
+					"Extent of course content", "Importance of course
+					explained", "Ease of learning", "Logically sequenced",
+					"Linked with previous and subsequent courses", "Encourages
+					critical thinking", "Course materials' relevance and
+					clarity", "Level of difficulty appropriate", "Learning
+					outcomes clearly defined", "Opportunities for practical
+					application", "Integration with industry requirements", "Use
+					of modern teaching methods", "Feedback mechanisms during the
+					course", "Opportunities for student participation", "Overall
+					satisfaction with the course", "Variety in learning material
+					such as hand-outs, case study, papers" ] %} {% for question
+					in default_questions %}
+					<div class="question-item">
+						<label>{{ loop.index }}. {{ question }}</label>
+						<div class="rating-group">
+							{% set question_index = loop.index0 %} {% for rating
+							in range(1,6) %}
+							<div class="rating-option">
+								<input
+									type="radio"
+									id="q_{{ question_index }}_rating_{{ rating }}"
+									name="q_rating_{{ question_index }}"
+									value="{{ rating }}"
+									required
+								/>
+								<label
+									for="q_{{ question_index }}_rating_{{ rating }}"
+									>{{ rating }}</label
+								>
+							</div>
+							{% endfor %}
+						</div>
+						<input
+							type="hidden"
+							name="q_text_{{ loop.index0 }}"
+							value="{{ question }}"
+						/>
+					</div>
+					{% endfor %}
+				</div>
+				<input
+					type="hidden"
+					name="question_count"
+					id="question_count"
+					value="17"
+				/>
+
+				<hr />
+				<h3>Subject Feedback</h3>
+				<div id="subjects"></div>
+				<button
+					type="button"
+					class="btn btn-add"
+					onclick="addSubject()"
+				>
+					Add Subject
+				</button>
+				<input
+					type="hidden"
+					name="subject_count"
+					id="subject_count"
+					value="0"
+				/>
+
+				<button type="submit" class="btn submit-btn">
+					Submit Survey
+				</button>
+			</form>
+		</div>
+	</body>
+</html>

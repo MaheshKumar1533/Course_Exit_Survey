@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Admin Panel - Course Exit Survey</title>
+		<link
+			rel="stylesheet"
+			href="{{ url_for('static', filename='css/styles.css') }}"
+		/>
+	</head>
+	<body>
+		<div class="container">
+			<header>
+				<h1>Admin Panel - Survey Responses</h1>
+				<div class="export-links">
+					<a href="/export/xlsx" class="export-link"
+						>Download Excel</a
+					>
+					<a href="/export/csv" class="export-link">Download CSV</a>
+				</div>
+			</header>
+
+			{% for r in responses %}
+			<div class="response-card">
+				<div class="response-header">
+					<div class="response-info">
+						<div class="response-info-item">
+							<span class="response-info-label">Name:</span>
+							<span>{{ r.full_name }}</span>
+						</div>
+						<div class="response-info-item">
+							<span class="response-info-label">Program:</span>
+							<span>{{ r.program_type }}</span>
+						</div>
+						<div class="response-info-item">
+							<span class="response-info-label">Department:</span>
+							<span>{{ r.department }}</span>
+						</div>
+					</div>
+					<div class="response-info">
+						<div class="response-info-item">
+							<span class="response-info-label"
+								>Year & Semester:</span
+							>
+							<span>{{ r.year_semester }}</span>
+						</div>
+						<div class="response-info-item">
+							<span class="response-info-label">Section:</span>
+							<span>{{ r.section }}</span>
+						</div>
+						<div class="response-info-item">
+							<span class="response-info-label"
+								>Academic Year:</span
+							>
+							<span>{{ r.academic_year }}</span>
+						</div>
+					</div>
+				</div>
+
+				<div class="response-body">
+					<div class="response-section">
+						<h4 class="section-title">General Questions</h4>
+						<ul class="question-list">
+							{% for q in r.questions %}
+							<li class="question-list-item">
+								<span class="question-text"
+									>{{ q.question_text }}</span
+								>
+								<span class="question-rating"
+									>Rating: {{ q.rating }}</span
+								>
+							</li>
+							{% endfor %}
+						</ul>
+					</div>
+
+					<div class="response-section">
+						<h4 class="section-title">Subjects & COs</h4>
+						{% for s in r.subjects %}
+						<div class="subject-section">
+							<div class="subject-header">
+								<h5 class="subject-title">
+									{{ s.subject_name }}
+								</h5>
+							</div>
+							<ul class="question-list">
+								{% for co in s.co_questions %}
+								<li class="question-list-item">
+									<span class="question-text"
+										>{{ co.co_question }}</span
+									>
+									<span class="question-rating"
+										>Rating: {{ co.co_rating }}</span
+									>
+								</li>
+								{% endfor %}
+							</ul>
+						</div>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+	</body>
+</html>
