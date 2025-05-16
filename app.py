@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, send_file, jsonify
+from flask import Flask, render_template, request, redirect, url_for, send_file, jsonify, flash
 from flask_sqlalchemy import SQLAlchemy
 import pandas as pd
 import os
@@ -6,8 +6,9 @@ import io
 import json
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///survey.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///survey1.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = 'your-secret-key-here'  # Required for flash messages
 
 db = SQLAlchemy(app)
 
@@ -35,6 +36,12 @@ class SubjectFeedback(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     survey_id = db.Column(db.Integer, db.ForeignKey('survey_response.id'))
     subject_name = db.Column(db.String(100))
+    average_rating = db.Column(db.Float, default=0.0)
+    co1_average = db.Column(db.Float, default=0.0)
+    co2_average = db.Column(db.Float, default=0.0)
+    co3_average = db.Column(db.Float, default=0.0)
+    co4_average = db.Column(db.Float, default=0.0)
+    co5_average = db.Column(db.Float, default=0.0)
     co_questions = db.relationship('COFeedback', backref='subject', cascade="all, delete-orphan")
 
 class COFeedback(db.Model):
@@ -69,16 +76,52 @@ def submit():
 
     subject_count = int(data.get('subject_count'))
     for i in range(subject_count):
-        subject = SubjectFeedback(subject_name=data.get(f'subject_name_{i}'))
+        course_code = data.get(f'course_code_{i}')
+        print(f"Adding subject {i} with course code: {course_code}")  # Debug log
+        subject = SubjectFeedback(subject_name=course_code)
         co_count = int(data.get(f'co_count_{i}'))
+        print(f"Found {co_count} COs for subject {i}")  # Debug log
+        
+        # Initialize arrays to store CO ratings
+        co_ratings = []
+        
+        # Dictionary to store CO-wise ratings
+        co_wise_ratings = {f"CO{j+1}": [] for j in range(5)}  # Initialize for 5 COs
+        
         for j in range(co_count):
             co_q = data.get(f'co_q_{i}_{j}')
             co_r = data.get(f'co_r_{i}_{j}')
+            if co_r:
+                co_rating = int(co_r)
+                co_num = j + 1
+                co_wise_ratings[f"CO{co_num}"].append(co_rating)
             subject.co_questions.append(COFeedback(co_question=co_q, co_rating=co_r))
+        
+        # Calculate averages for each CO and overall average
+        total_sum = 0
+        valid_cos = 0
+        
+        # Calculate and store individual CO averages
+        for co_num in range(1, 6):
+            co_ratings = co_wise_ratings[f"CO{co_num}"]
+            if co_ratings:  # If we have ratings for this CO
+                co_avg = sum(co_ratings) / len(co_ratings)
+                # Set the individual CO average
+                setattr(subject, f'co{co_num}_average', round(co_avg, 2))
+                total_sum += co_avg
+                valid_cos += 1
+                print(f"Subject {course_code} CO{co_num} average: {co_avg}")  # Debug log
+        
+        # Calculate and set the overall average
+        if valid_cos > 0:
+            subject.average_rating = round(total_sum / valid_cos, 2)
+            print(f"Subject {course_code} overall average: {subject.average_rating}")  # Debug log
+        
         response.subjects.append(subject)
 
     db.session.add(response)
     db.session.commit()
+    flash('Survey submitted successfully! Thank you for your feedback.', 'success')
     return redirect(url_for('index'))
 
 @app.route('/adminofCES')
@@ -91,11 +134,14 @@ def export(filetype):
     responses = SurveyResponse.query.all()
     data = []
     for r in responses:
+        # Combine year and sem fields
+        year_sem = f"{r.year} Year {r.sem} Sem" if r.year and r.sem else ""
         base_info = {
             'full_name': r.full_name,
             'program_type': r.program_type,
             'department': r.department,
-            'year_semester': r.year_semester,
+            'roll_number': r.roll_number,
+            'year_semester': year_sem,
             'section': r.section,
             'academic_year': r.academic_year
         }
@@ -144,6 +190,56 @@ def get_courses():
     except Exception as e:
         app.logger.error(f"Error loading course data: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
+@app.route('/export/responder/<int:response_id>')
+def export_responder(response_id):
+    response = SurveyResponse.query.get_or_404(response_id)
+    data = []
+    
+    # Create base info dict with combined year and sem
+    base_info = {
+        'Student Name': response.full_name,
+        'Roll Number': response.roll_number,
+        'Program': response.program_type,
+        'Department': response.department,
+        'Year & Semester': f"{response.year} Year {response.sem} Sem",
+        'Section': response.section,
+        'Academic Year': response.academic_year
+    }
+    
+    # Add general questions
+    for q in response.questions:
+        data.append({
+            'Category': 'General',
+            'Question': q.question_text,
+            'Rating': q.rating,
+            'Subject': '',
+            'CO': ''
+        })
+    
+    # Add subject CO questions
+    for subject in response.subjects:
+        for co in subject.co_questions:
+            data.append({
+                'Category': 'Subject',
+                'Question': co.co_question,
+                'Rating': co.co_rating,
+                'Subject': subject.subject_name,
+                'CO': f'CO{co.id % 5 + 1}'  # Assuming 5 COs per subject
+            })
+
+    # Create DataFrame and export to CSV
+    df = pd.DataFrame(data)
+    output = io.BytesIO()
+    df.to_csv(output, index=False)
+    output.seek(0)
+    
+    return send_file(
+        output,
+        mimetype='text/csv',
+        as_attachment=True,
+        download_name=f'response_{response_id}.csv'
+    )
 
 if __name__ == '__main__':
     with app.app_context():

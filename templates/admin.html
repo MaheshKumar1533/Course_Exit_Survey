@@ -52,6 +52,14 @@
 				</div>
 			</header>
 
+			<div class="averages-section">
+				<div id="general-averages" class="averages-container"></div>
+				<div id="subject-averages" class="averages-container">
+					<h3>Course Averages</h3>
+					<div class="course-list"></div>
+				</div>
+			</div>
+
 			{% for r in responses %}
 			<div class="response-card" 
 				data-name="{{ r.full_name }}"
@@ -61,43 +69,45 @@
 				data-section="{{ r.section }}"
 				data-department="{{ r.department }}"
 				data-academic-year="{{ r.academic_year }}">
-				<div class="response-header">
-					<div class="response-info">
-						<div class="response-info-item">
-							<span class="response-info-label">Name:</span>
-							<span>{{ r.full_name }}</span>
+				<div class="response-header" onclick="toggleResponse(this)">
+					<div class="response-info-wrapper">
+						<div class="response-info-left">
+							<div class="response-info-item">
+								<span class="response-info-label">Name:</span>
+								<span>{{ r.full_name }}</span>
+							</div>
+							<div class="response-info-item">
+								<span class="response-info-label">Roll Number:</span>
+								<span>{{ r.roll_number }}</span>
+							</div>
+							<div class="response-info-item">
+								<span class="response-info-label">Program:</span>
+								<span>{{ r.program_type }}</span>
+							</div>
 						</div>
-						<div class="response-info-item">
-							<span class="response-info-label">Program:</span>
-							<span>{{ r.program_type }}</span>
+						<div class="response-info-right">
+							<div class="response-info-item">
+								<span class="response-info-label">Year & Semester:</span>
+								<span>{{ r.year }} & {{ r.sem }}</span>
+							</div>
+							<div class="response-info-item">
+								<span class="response-info-label">Section:</span>
+								<span>{{ r.section }}</span>
+							</div>
+							<div class="response-info-item">
+								<span class="response-info-label">Academic Year:</span>
+								<span>{{ r.academic_year }}</span>
+							</div>
+							<button onclick="event.stopPropagation(); downloadResponderDetails('{{ r.id }}')" class="download-responder-btn">
+								<span class="download-icon">↓</span> Download Details
+							</button>
 						</div>
-						<div class="response-info-item">
-							<span class="response-info-label">Department:</span>
-							<span>{{ r.department }}</span>
-						</div>
-					</div>
-					<div class="response-info">
-						<div class="response-info-item">
-							<span class="response-info-label"
-								>Year & Semester:</span
-							>
-							<span>{{ r.year }} & {{ r.sem }}</span>
-						</div>
-						<div class="response-info-item">
-							<span class="response-info-label">Section:</span>
-							<span>{{ r.section }}</span>
-						</div>
-						<div class="response-info-item">
-							<span class="response-info-label"
-								>Academic Year:</span
-							>
-							<span>{{ r.academic_year }}</span>
-						</div>
+						<div class="expand-icon">▼</div>
 					</div>
 				</div>
 
 				<div class="response-body">
-					<div class="response-section">
+					<div class="response-section general-questions">
 						<h4 class="section-title">General Questions</h4>
 						<ul class="question-list">
 							{% for q in r.questions %}
@@ -116,21 +126,18 @@
 					<div class="response-section">
 						<h4 class="section-title">Subjects & COs</h4>
 						{% for s in r.subjects %}
-						<div class="subject-section">
+						<div class="subject-section" 
+							data-subject-id="subject-{{ loop.index0 }}"
+							data-average="{{ s.average_rating }}">
 							<div class="subject-header">
-								<h5 class="subject-title">
-									{{ s.subject_name }}
-								</h5>
+								<h5 class="subject-title">{{ s.subject_name }}</h5>
+								<span class="average-rating">(Avg: {{ "%.2f"|format(s.average_rating) }})</span>
 							</div>
 							<ul class="question-list">
 								{% for co in s.co_questions %}
 								<li class="question-list-item">
-									<span class="question-text"
-										>{{ co.co_question }}</span
-									>
-									<span class="question-rating"
-										>Rating: {{ co.co_rating }}</span
-									>
+									<span class="question-text">{{ co.co_question }}</span>
+									<span class="question-rating">Rating: {{ co.co_rating }}</span>
 								</li>
 								{% endfor %}
 							</ul>
@@ -141,5 +148,10 @@
 			</div>
 			{% endfor %}
 		</div>
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				calculateAverages();
+			});
+		</script>
 	</body>
 </html>

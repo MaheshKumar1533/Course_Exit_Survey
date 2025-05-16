@@ -13,6 +13,16 @@
 	</head>
 	<body>
 		<div class="container">
+			{% with messages = get_flashed_messages(with_categories=true) %}
+				{% if messages %}
+					{% for category, message in messages %}
+						<div class="alert alert-{{ category }}">
+							{{ message }}
+						</div>
+					{% endfor %}
+				{% endif %}
+			{% endwith %}
+			
 			<header>
 				<h1>MITS-CSE Course Exit Survey</h1>
 				<p>Please provide your valuable feedback about your courses</p>
@@ -102,7 +112,7 @@
 						<div class="radio-option">
 							<input
 								type="radio"
-								id="year_3"
+							id="year_3"
 								name="year"
 								value="3"
 							/>
@@ -135,7 +145,7 @@
 						<div class="radio-option">
 							<input
 								type="radio"
-								id="sem_2"
+							id="sem_2"
 								name="sem"
 								value="2"
 							/>
