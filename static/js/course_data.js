@@ -308,4 +308,148 @@
 			co5: "Simulate simple smart contracts.",
 		},
 	},
+	{
+		coursecode: "23HUM101",
+		coursename: "UNIVERSAL HUMAN VALUES",
+		courseoutcomes: {
+			co1: "Understand the Natural Acceptance and basic human aspiration.",
+			co2: "Aware of themselves and self-regulation.",
+			co3: "Recognize human-human relationship (Justice) and identify human goals in the society.",
+			co4: "Appreciate the harmony in the nature and existence.",
+			co5: "Develop as socially and ecologically responsible engineers in handling problems with sustainable solutions (user-friendly and eco-friendly).",
+		},
+	},
+	{
+		coursecode: "23MAT107",
+		coursename: "PROBABILITY AND STATISTICS FOR COMPUTER SCIENCE",
+		courseoutcomes: {
+			co1: "Understand the probability concepts and their importance in engineering.",
+			co2: "Apply discrete and continuous probability distributions to solve various engineering problems.",
+			co3: "Get an idea about joint density functions, distribution functions to the random variables and analyse the multivariate problems in engineering.",
+			co4: "Apply the method of least squares to estimate the parameters of a regression model.",
+			co5: "Perform Test of Hypothesis as well as calculate confidence interval for a population parameter for single sample and two sample cases.",
+		},
+	},
+	{
+		coursecode: "23CSE104",
+		coursename: "ADVANCED DATA STRUCTURES AND ALGORITHM ANALYSIS",
+		courseoutcomes: {
+			co1: "Illustrate the working of the advanced tree data structures and their applications.",
+			co2: "Understand the Graph data structure, traversals and apply them in various contexts.",
+			co3: "Use various data structures in the design of algorithms.",
+			co4: "Recommend appropriate data structures based on the problem being solved.",
+			co5: "Analyze algorithms with respect to space and time complexities.",
+		},
+	},
+	{
+		coursecode: "23CSE204",
+		coursename:
+			"ADVANCED DATA STRUCTURES AND ALGORITHM ANALYSIS LABORATORY",
+		courseoutcomes: {
+			co1: "Implement the operations on AVL Trees, B- Trees, and Graphs.",
+			co2: "Solve and analyze the problems using Divide & Conquer strategy.",
+			co3: "Execute the problems using Greedy Method.",
+			co4: "Utilize appropriate data structures and algorithms to optimize solutions for specific computational problems.",
+			co5: "Apply Dynamic Programming Methods to solve various problems.",
+		},
+	},
+	{
+		coursecode: "23CSE105",
+		coursename: "OBJECT ORIENTED PROGRAMMING THROUGH JAVA",
+		courseoutcomes: {
+			co1: "Analyze problems, design solutions using OOP principles, and implement them efficiently in Java.",
+			co2: "Design and implement classes to model real-world entities, with a focus on attributes, behaviours,and relationships between objects.",
+			co3: "Demonstrate an understanding of inheritance hierarchies and polymorphic behaviour, including method overriding and interface concept.",
+			co4: "Apply Competence in handling exceptions and errors to write robust and fault-tolerant code.",
+			co5: "Develop multithreaded applications with synchronization.",
+		},
+	},
+	{
+		coursecode: "23CSE205",
+		coursename: "OBJECT ORIENTED PROGRAMMING THROUGH JAVA LABORATORY",
+		courseoutcomes: {
+			co1: "Demonstrate a solid understanding of Java syntax, including data types, control structures,methods, classes, objects, inheritance, polymorphism, and exception handling.",
+			co2: "Apply fundamental OOP principles such as encapsulation, inheritance, polymorphism, and abstraction to solve programming problems effectively.",
+			co3: "Familiar with commonly used Java libraries and APIs, including the Collections Framework,Java I/O, JDBC, and other utility classes.",
+			co4: "Develop problem-solving skills and algorithmic thinking, applying OOP concepts to design efficient solutions to various programming challenges.",
+			co5: "Proficiently construct multi-threading applications.",
+		},
+	},
+	{
+		coursecode: "23CSE601",
+		coursename: "Python Programming",
+		courseoutcomes: {
+			co1: "Understand to adept command of Python syntax, deftly utilizing variables, data types, and control structures.",
+			co2: "Apply Python programming concepts like Lists and Dictionary to solve a variety of computational problems.",
+			co3: "Build and manipulate fundamental data structures such as tuples and sets.",
+			co4: "Interpret Strings, functions, modules, exception handling to engineer robust and efficient code solutions.",
+			co5: "Demonstrate file handling concepts in python.",
+		},
+	},
+	{
+		coursecode: "23CSE106",
+		coursename: "DATABASE MANAGEMENT SYSTEMS",
+		courseoutcomes: {
+			co1: "Explore the basic concepts of database management systems.",
+			co2: "Analyze a given database application scenario to use ER model for conceptual design of the database.",
+			co3: "Utilize SQL proficiently to address diverse query challenges.",
+			co4: "Employ normalization methods to enhance database structure.",
+			co5: "Implement transaction processing, concurrency control and database recovery protocols in databases.",
+		},
+	},
+	{
+		coursecode: "23CSE107",
+		coursename: "OPERATING SYSTEMS",
+		courseoutcomes: {
+			co1: "Describe the basics of the operating systems, mechanisms of OS to handle processes, threads, and their communication.",
+			co2: "Make use of process scheduling algorithms and synchronization techniques to achieve better performance of a computer system.",
+			co3: "Illustrate different conditions for deadlock and their possible solutions.",
+			co4: "Analyse the memory management and its allocation policies.",
+			co5: "Implement the file protection techniques.",
+		},
+	},
+	{
+		coursecode: "23CSE108",
+		coursename: "SOFTWARE ENGINEERING",
+		courseoutcomes: {
+			co1: "Perform various life cycle activities like Analysis, Design, Implementation, Testing and Maintenance",
+			co2: "Analyse various software engineering models and apply methods for design and development of software projects.",
+			co3: "Develop system designs using appropriate techniques.",
+			co4: "Explore various testing techniques for a software project.",
+			co5: "Apply standards, CASE tools and techniques for engineering software projects.",
+		},
+	},
+	{
+		coursecode: "23CSE206",
+		coursename: "DATABASE MANAGEMENT SYSTEMS LABORATORY",
+		courseoutcomes: {
+			co1: "Perform table creation, maintain, and manipulate a relational database using SQL.",
+			co2: "Implement complex queries using SQL.",
+			co3: "Apply Queries using Advanced Concepts of SQL.",
+			co4: "Build PL/SQL programs including stored procedures, functions, cursors and triggers.",
+			co5: "Establish database connectivity through JDBC (Java Database Connectivity).",
+		},
+	},
+	{
+		coursecode: "23CSE207",
+		coursename: "OPERATING SYSTEMS LABORATORY",
+		courseoutcomes: {
+			co1: "Trace different CPU Scheduling algorithms.",
+			co2: "Implement Bankers Algorithms to Avoid the Dead Lock.",
+			co3: "Evaluate Page replacement algorithms.",
+			co4: "Illustrate the file organization techniques.",
+			co5: "Illustrate Inter process Communication and concurrent execution of threads.",
+		},
+	},
+	{
+		coursecode: "23CSE602",
+		coursename: "FULL STACK DEVELOPMENT - I",
+		courseoutcomes: {
+			co1: "Proficient in HTML and CSS for Static Web Pages.",
+			co2: "Utilize CSS concepts for Web pages design.",
+			co3: "Build dynamic Web Page Development with JavaScript.",
+			co4: "Apply looping and branching statements of JAVASCRIPT for dynamic website development.",
+			co5: "Implement effective UI/UX Design.",
+		},
+	},
 ];
