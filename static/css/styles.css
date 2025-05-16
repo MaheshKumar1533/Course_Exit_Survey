@@ -80,6 +80,7 @@ form {
 
 .form-group {
 	margin-bottom: 20px;
+	position: relative;
 }
 
 label {
@@ -306,39 +307,86 @@ hr {
 
 /* Admin Panel Filter Section */
 .filter-section {
-    background-color: var(--light-gray);
-    padding: 20px;
-    border-radius: var(--radius);
-    margin-bottom: 20px;
+	background-color: var(--light-gray);
+	padding: 20px;
+	border-radius: var(--radius);
+	margin-bottom: 20px;
 }
 
 .filter-form {
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-    justify-content: center;
+	display: flex;
+	gap: 15px;
+	flex-wrap: wrap;
+	justify-content: center;
 }
 
 .filter-form input,
 .filter-form select {
-    padding: 8px 12px;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
-    min-width: 200px;
+	padding: 8px 12px;
+	border: 1px solid var(--border-color);
+	border-radius: var(--radius);
+	min-width: 200px;
 }
 
 .filter-btn {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 8px 20px;
-    border-radius: var(--radius);
-    cursor: pointer;
-    transition: background-color 0.3s;
+	background-color: var(--primary-color);
+	color: white;
+	border: none;
+	padding: 8px 20px;
+	border-radius: var(--radius);
+	cursor: pointer;
+	transition: background-color 0.3s;
 }
 
 .filter-btn:hover {
-    background-color: var(--secondary-color);
+	background-color: var(--secondary-color);
+}
+
+/* Course Suggestions */
+.course-suggestions {
+	position: absolute;
+	width: 100%;
+	max-height: 200px;
+	overflow-y: auto;
+	background-color: white;
+	border: 1px solid var(--border-color);
+	border-radius: var(--radius);
+	z-index: 100; /* Make sure it's above other elements */
+	box-shadow: var(--shadow);
+	margin-top: 2px;
+	display: block; /* Ensure it's displayed */
+}
+
+.course-suggestion {
+	padding: 10px;
+	cursor: pointer;
+	transition: background-color 0.2s;
+	border-bottom: 1px solid var(--border-color);
+}
+
+.course-suggestion:last-child {
+	border-bottom: none;
+}
+
+.course-suggestion:hover {
+	background-color: var(--light-gray);
+	color: var(--primary-color);
+}
+
+/* Form group with course input should be positioned relatively */
+.form-group {
+	position: relative;
+}
+
+/* Course code input style */
+.course-code-input {
+	width: 100%;
+}
+
+/* Position the subject section to handle the dropdown properly */
+.subject-section {
+	position: relative;
+	margin-bottom: 40px;
 }
 
 @media (max-width: 768px) {

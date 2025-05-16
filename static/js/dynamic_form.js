@@ -1,5 +1,20 @@
 let questionCount = 0;
 let subjectCount = 0;
+let courseData = [];
+
+// Load the course data from the API when the page loads
+document.addEventListener("DOMContentLoaded", () => {
+	fetch("/api/courses")
+		.then((response) => response.json())
+		.then((data) => {
+			courseData = data;
+			console.log("Course data loaded successfully");
+			console.log("Loaded " + courseData.length + " courses");
+		})
+		.catch((error) => {
+			console.error("Error loading course data:", error);
+		});
+});
 
 function addQuestion() {
 	const container = document.getElementById("general-questions");
@@ -42,15 +57,24 @@ function addSubject() {
 	const coContainerId = `cos_${subjectCount}`;
 	const div = document.createElement("div");
 	div.className = "subject-section";
+	// Add a data attribute to store the subject index
+	div.setAttribute("data-subject-index", subjectCount);
 
 	div.innerHTML = `
         <div class="subject-header">
             <h4 class="subject-title">New Subject</h4>
-            <button type="button" class="remove-btn" onclick="this.parentElement.parentElement.remove()">×</button>
+            <button type="button" class="remove-btn" onclick="removeSubject(this)">×</button>
         </div>
         <div class="form-group">
-            <label for="subject_name_${subjectCount}">Course Code:</label>
-            <input type="text" name="subject_name_${subjectCount}" id="subject_name_${subjectCount}" required placeholder="e.g., CS101">
+            <label for="course_code_${subjectCount}">Course Code:</label>
+            <input type="text" name="course_code_${subjectCount}" id="course_code_${subjectCount}" 
+                   data-subject-index="${subjectCount}"
+                   required placeholder="Type to search course code or name" class="course-code-input">
+            <div id="course_suggestions_${subjectCount}" class="course-suggestions"></div>
+        </div>
+        <div class="form-group">
+            <label for="subject_name_${subjectCount}">Course Name:</label>
+            <input type="text" name="subject_name_${subjectCount}" id="subject_name_${subjectCount}" required readonly>
         </div>
         <div id="${coContainerId}" class="co-container"></div>
         <input type="hidden" name="co_count_${subjectCount}" id="co_count_${subjectCount}" value="5">
@@ -62,8 +86,134 @@ function addSubject() {
 		addCO(coContainerId, subjectCount, i);
 	}
 
+	// Add event listeners for the course code input field
+	const courseCodeInput = document.getElementById(
+		`course_code_${subjectCount}`
+	);
+
+	// Use a more robust way to handle events
+	courseCodeInput.addEventListener("input", function () {
+		const index = this.getAttribute("data-subject-index");
+		suggestCourses(this.value, index);
+	});
+
+	courseCodeInput.addEventListener("focus", function () {
+		const index = this.getAttribute("data-subject-index");
+		if (this.value.length >= 2) {
+			suggestCourses(this.value, index);
+		}
+	});
+
 	subjectCount++;
 	document.getElementById("subject_count").value = subjectCount;
+}
+
+// Function to suggest courses based on user input
+function suggestCourses(query, subjectIndex) {
+	if (!courseData || courseData.length === 0) {
+		console.error("Course data not loaded yet");
+		return;
+	}
+
+	query = query.toLowerCase().trim();
+
+	// Get the suggestions div safely
+	const suggestionsDiv = document.getElementById(
+		`course_suggestions_${subjectIndex}`
+	);
+	if (!suggestionsDiv) {
+		console.error(
+			`Could not find suggestions div for subject ${subjectIndex}`
+		);
+		return;
+	}
+
+	if (query.length < 2) {
+		suggestionsDiv.innerHTML = "";
+		return;
+	}
+
+	console.log(`Searching for: ${query} in ${courseData.length} courses`);
+
+	const filteredCourses = courseData
+		.filter((course) => {
+			if (!course || !course.coursecode || !course.coursename)
+				return false;
+			const courseCode = course.coursecode.toLowerCase();
+			const courseName = course.coursename.toLowerCase();
+			return courseCode.includes(query) || courseName.includes(query);
+		})
+		.slice(0, 5); // Limit to 5 suggestions
+
+	console.log(`Found ${filteredCourses.length} matching courses`);
+
+	// Clear the suggestions
+	suggestionsDiv.innerHTML = "";
+
+	// Add each suggestion
+	filteredCourses.forEach((course) => {
+		const suggestion = document.createElement("div");
+		suggestion.classList.add("course-suggestion");
+		suggestion.textContent = `${course.coursecode} - ${course.coursename}`;
+		suggestion.addEventListener("click", () => {
+			selectCourse(course, subjectIndex);
+			suggestionsDiv.innerHTML = "";
+		});
+		suggestionsDiv.appendChild(suggestion);
+	});
+}
+
+// Function to select a course and fill in the details
+function selectCourse(course, subjectIndex) {
+	// Try to find the elements safely
+	const courseCodeField = document.getElementById(
+		`course_code_${subjectIndex}`
+	);
+	const courseNameField = document.getElementById(
+		`subject_name_${subjectIndex}`
+	);
+
+	if (!courseCodeField || !courseNameField) {
+		console.error(
+			`Could not find course fields for subject ${subjectIndex}`
+		);
+		return;
+	}
+
+	// Set the course code and name
+	courseCodeField.value = course.coursecode;
+	courseNameField.value = course.coursename;
+
+	// Fill in the course outcomes
+	if (course.courseoutcomes) {
+		console.log("Filling COs for course: " + course.coursecode);
+		// First clear any existing values
+		for (let i = 0; i < 5; i++) {
+			const coField = document.getElementById(
+				`co_q_${subjectIndex}_${i}`
+			);
+			if (coField) {
+				coField.value = "";
+			}
+		}
+
+		// Then fill in the new values
+		Object.entries(course.courseoutcomes).forEach(([key, value], index) => {
+			const coField = document.getElementById(
+				`co_q_${subjectIndex}_${index}`
+			);
+			if (coField) {
+				coField.value = value;
+				console.log(`Set CO${index + 1}: ${value}`);
+			} else {
+				console.warn(
+					`Could not find CO field ${index} for subject ${subjectIndex}`
+				);
+			}
+		});
+	} else {
+		console.warn("No course outcomes found for: " + course.coursecode);
+	}
 }
 
 // Update addCO to accept optional coIndex
@@ -71,7 +221,7 @@ function addCO(containerId, subjectIndex, coIndexParam) {
 	const container = document.getElementById(containerId);
 	const countInput = document.getElementById(`co_count_${subjectIndex}`);
 	let coIndex;
-	if (typeof coIndexParam === 'number') {
+	if (typeof coIndexParam === "number") {
 		coIndex = coIndexParam;
 	} else {
 		coIndex = parseInt(countInput.value);
@@ -82,7 +232,9 @@ function addCO(containerId, subjectIndex, coIndexParam) {
 	div.className = "question-item";
 	div.innerHTML = `
         <div class="form-group">
-            <label for="co_q_${subjectIndex}_${coIndex}">CO${coIndex + 1} Question:</label>
+            <label for="co_q_${subjectIndex}_${coIndex}">CO${
+		coIndex + 1
+	} Question:</label>
             <input type="text" name="co_q_${subjectIndex}_${coIndex}" id="co_q_${subjectIndex}_${coIndex}" 
                    required placeholder="Enter the course outcome question">
         </div>
@@ -118,4 +270,22 @@ function addCO(containerId, subjectIndex, coIndexParam) {
         </div>
     `;
 	container.appendChild(div);
+}
+
+// Function to properly remove a subject and update counts
+function removeSubject(button) {
+	const subjectSection = button.closest(".subject-section");
+	if (subjectSection) {
+		subjectSection.remove();
+
+		// Update the subject count
+		const subjectsContainer = document.getElementById("subjects");
+		const remainingSubjects =
+			subjectsContainer.querySelectorAll(".subject-section").length;
+		document.getElementById("subject_count").value = remainingSubjects;
+
+		console.log(
+			`Removed a subject. Remaining subjects: ${remainingSubjects}`
+		);
+	}
 }

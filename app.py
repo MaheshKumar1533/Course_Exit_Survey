@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for, send_file
+from flask import Flask, render_template, request, redirect, url_for, send_file, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import pandas as pd
 import os
 import io
+import json
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///survey.db'
@@ -132,7 +133,19 @@ def export(filetype):
         return send_file(file_stream, as_attachment=True, download_name='survey_export.csv')
     return "Invalid filetype"
 
+# Route to serve course data from JSON file
+@app.route('/api/courses')
+def get_courses():
+    try:
+        json_path = os.path.join(os.path.dirname(__file__), 'Extended_Full_CSE_Curriculum.json')
+        with open(json_path, 'r') as file:
+            courses = json.load(file)
+        return jsonify(courses)
+    except Exception as e:
+        app.logger.error(f"Error loading course data: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    app.run(debug=True, port=5001)
