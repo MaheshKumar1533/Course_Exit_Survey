@@ -17,7 +17,8 @@ class SurveyResponse(db.Model):
     roll_number = db.Column(db.String(20))
     program_type = db.Column(db.String(10))
     department = db.Column(db.String(50))
-    year_semester = db.Column(db.String(20))
+    year = db.Column(db.Integer)
+    sem = db.Column(db.Integer)
     section = db.Column(db.String(10))
     academic_year = db.Column(db.String(20))
     questions = db.relationship('GeneralQuestionResponse', backref='survey', cascade="all, delete-orphan")
@@ -53,7 +54,8 @@ def submit():
         program_type=data.get('program_type'),
         roll_number=data.get('roll_number'),
         department=data.get('department'),
-        year_semester=data.get('year_semester'),
+        year=data.get('year'),
+        sem=data.get('sem'),
         section=data.get('section'),
         academic_year=data.get('academic_year')
     )

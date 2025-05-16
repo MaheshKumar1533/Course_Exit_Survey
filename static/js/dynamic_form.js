@@ -53,26 +53,36 @@ function addSubject() {
             <input type="text" name="subject_name_${subjectCount}" id="subject_name_${subjectCount}" required placeholder="e.g., CS101">
         </div>
         <div id="${coContainerId}" class="co-container"></div>
-        <button type="button" class="btn btn-add" onclick="addCO('${coContainerId}', ${subjectCount})">Add Course Outcome</button>
-        <input type="hidden" name="co_count_${subjectCount}" id="co_count_${subjectCount}" value="0">
+        <input type="hidden" name="co_count_${subjectCount}" id="co_count_${subjectCount}" value="5">
     `;
 	container.appendChild(div);
+
+	// Add exactly 5 COs automatically
+	for (let i = 0; i < 5; i++) {
+		addCO(coContainerId, subjectCount, i);
+	}
+
 	subjectCount++;
 	document.getElementById("subject_count").value = subjectCount;
 }
 
-function addCO(containerId, subjectIndex) {
+// Update addCO to accept optional coIndex
+function addCO(containerId, subjectIndex, coIndexParam) {
 	const container = document.getElementById(containerId);
 	const countInput = document.getElementById(`co_count_${subjectIndex}`);
-	const coIndex = parseInt(countInput.value);
+	let coIndex;
+	if (typeof coIndexParam === 'number') {
+		coIndex = coIndexParam;
+	} else {
+		coIndex = parseInt(countInput.value);
+		countInput.value = coIndex + 1;
+	}
 
 	const div = document.createElement("div");
 	div.className = "question-item";
 	div.innerHTML = `
         <div class="form-group">
-            <label for="co_q_${subjectIndex}_${coIndex}">CO${
-		coIndex + 1
-	} Question:</label>
+            <label for="co_q_${subjectIndex}_${coIndex}">CO${coIndex + 1} Question:</label>
             <input type="text" name="co_q_${subjectIndex}_${coIndex}" id="co_q_${subjectIndex}_${coIndex}" 
                    required placeholder="Enter the course outcome question">
         </div>
@@ -108,5 +118,4 @@ function addCO(containerId, subjectIndex) {
         </div>
     `;
 	container.appendChild(div);
-	countInput.value = coIndex + 1;
 }

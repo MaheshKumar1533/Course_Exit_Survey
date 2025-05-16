@@ -8,11 +8,42 @@
 			rel="stylesheet"
 			href="{{ url_for('static', filename='css/styles.css') }}"
 		/>
+		<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
 	</head>
 	<body>
 		<div class="container">
 			<header>
 				<h1>Admin Panel - Survey Responses</h1>
+				<div class="filter-section">
+					<div class="filter-form">
+						<input type="text" id="search" placeholder="Search by name or roll number" />
+						<select id="year">
+							<option value="">Select Year</option>
+							<option value="1">I</option>
+							<option value="2">II</option>
+							<option value="3">III</option>
+							<option value="4">IV</option>
+						</select>
+						<select id="sem">
+							<option value="">Select Semester</option>
+							<option value="1">Sem I</option>
+							<option value="2">Sem II</option>
+						</select>
+						<select id="section">
+							<option value="">Select Section</option>
+							<option value="A">A</option>
+							<option value="B">B</option>
+							<option value="C">C</option>
+							<option value="D">D</option>
+						</select>
+						<select id="department">
+							<option value="">Select Department</option>
+							<option value="CSE">Computer Science and Engineering</option>
+						</select>
+						<input type="text" id="academic_year" placeholder="Academic Year (e.g., 2024-2025)" />
+						<button onclick="applyFilters()" class="filter-btn">Apply Filters</button>
+					</div>
+				</div>
 				<div class="export-links">
 					<a href="/export/xlsx" class="export-link"
 						>Download Excel</a
@@ -22,7 +53,14 @@
 			</header>
 
 			{% for r in responses %}
-			<div class="response-card">
+			<div class="response-card" 
+				data-name="{{ r.full_name }}"
+				data-roll="{{ r.roll_number }}"
+				data-year="{{ r.year }}"
+				data-sem="{{ r.sem }}"
+				data-section="{{ r.section }}"
+				data-department="{{ r.department }}"
+				data-academic-year="{{ r.academic_year }}">
 				<div class="response-header">
 					<div class="response-info">
 						<div class="response-info-item">
@@ -43,7 +81,7 @@
 							<span class="response-info-label"
 								>Year & Semester:</span
 							>
-							<span>{{ r.year_semester }}</span>
+							<span>{{ r.year }} & {{ r.sem }}</span>
 						</div>
 						<div class="response-info-item">
 							<span class="response-info-label">Section:</span>

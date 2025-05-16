@@ -304,6 +304,43 @@ hr {
 	background-color: #27ae60;
 }
 
+/* Admin Panel Filter Section */
+.filter-section {
+    background-color: var(--light-gray);
+    padding: 20px;
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+}
+
+.filter-form {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.filter-form input,
+.filter-form select {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    min-width: 200px;
+}
+
+.filter-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.filter-btn:hover {
+    background-color: var(--secondary-color);
+}
+
 @media (max-width: 768px) {
 	.container {
 		padding: 15px;
