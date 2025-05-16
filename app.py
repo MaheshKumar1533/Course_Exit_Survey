@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, send_file, jsonify, flash
+from flask import Flask, render_template, request, redirect, url_for, send_file, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import pandas as pd
 import os
@@ -6,9 +6,8 @@ import io
 import json
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///survey1.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///survey.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'your-secret-key-here'  # Required for flash messages
 
 db = SQLAlchemy(app)
 
@@ -121,7 +120,6 @@ def submit():
 
     db.session.add(response)
     db.session.commit()
-    flash('Survey submitted successfully! Thank you for your feedback.', 'success')
     return redirect(url_for('index'))
 
 @app.route('/adminofCES')

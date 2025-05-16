@@ -13,16 +13,6 @@
 	</head>
 	<body>
 		<div class="container">
-			{% with messages = get_flashed_messages(with_categories=true) %}
-				{% if messages %}
-					{% for category, message in messages %}
-						<div class="alert alert-{{ category }}">
-							{{ message }}
-						</div>
-					{% endfor %}
-				{% endif %}
-			{% endwith %}
-			
 			<header>
 				<h1>MITS-CSE Course Exit Survey</h1>
 				<p>Please provide your valuable feedback about your courses</p>
