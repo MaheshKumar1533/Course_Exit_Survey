@@ -184,6 +184,23 @@ function toggleResponse(header) {
     const responseBody = responseCard.querySelector('.response-body');
     const expandIcon = header.querySelector('.expand-icon');
     
+    // Close all other expanded responses first
+    const allResponseBodies = document.querySelectorAll('.response-body');
+    const allExpandIcons = document.querySelectorAll('.expand-icon');
+    
+    allResponseBodies.forEach(body => {
+        if (body !== responseBody) {
+            body.style.display = 'none';
+        }
+    });
+    
+    allExpandIcons.forEach(icon => {
+        if (icon !== expandIcon) {
+            icon.style.transform = 'rotate(0deg)';
+        }
+    });
+    
+    // Toggle the clicked response
     if (responseBody.style.display === 'none' || !responseBody.style.display) {
         responseBody.style.display = 'block';
         expandIcon.style.transform = 'rotate(180deg)';

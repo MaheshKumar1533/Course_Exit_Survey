@@ -106,6 +106,7 @@ function addSubject() {
 
 	subjectCount++;
 	document.getElementById("subject_count").value = subjectCount;
+	updateSubmitButton();
 }
 
 // Function to suggest courses based on user input
@@ -284,8 +285,41 @@ function removeSubject(button) {
 			subjectsContainer.querySelectorAll(".subject-section").length;
 		document.getElementById("subject_count").value = remainingSubjects;
 
+		updateSubmitButton();
 		console.log(
 			`Removed a subject. Remaining subjects: ${remainingSubjects}`
 		);
 	}
 }
+
+function updateSubmitButton() {
+    const submitButton = document.querySelector('.submit-btn');
+    const subjectsCount = document.querySelectorAll('.subject-section').length;
+    
+    if (subjectsCount < 7) {
+        submitButton.disabled = true;
+        submitButton.title = `Please add at least ${7 - subjectsCount} more subject(s)`;
+        // Add visual indication
+        submitButton.style.opacity = '0.5';
+        submitButton.style.cursor = 'not-allowed';
+    } else {
+        submitButton.disabled = false;
+        submitButton.title = '';
+        submitButton.style.opacity = '1';
+        submitButton.style.cursor = 'pointer';
+    }
+}
+
+// Add form submission validation
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    updateSubmitButton(); // Initial check
+
+    form.addEventListener('submit', function(event) {
+        const subjectsCount = document.querySelectorAll('.subject-section').length;
+        if (subjectsCount < 7) {
+            event.preventDefault();
+            alert(`You need to add at least ${7 - subjectsCount} more subject(s) before submitting.`);
+        }
+    });
+});
