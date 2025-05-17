@@ -55,72 +55,105 @@ def index():
 
 @app.route('/submit', methods=['POST'])
 def submit():
-    data = request.form
-    response = SurveyResponse(
-        full_name=data.get('full_name'),
-        program_type=data.get('program_type'),
-        roll_number=data.get('roll_number'),
-        department=data.get('department'),
-        year=data.get('year'),
-        sem=data.get('sem'),
-        section=data.get('section'),
-        academic_year=data.get('academic_year')
-    )
+    try:
+        data = request.form
+        print("Received form data with the following keys:", list(data.keys()))
+        
+        response = SurveyResponse(
+            full_name=data.get('full_name'),
+            program_type=data.get('program_type'),
+            roll_number=data.get('roll_number'),
+            department=data.get('department'),
+            year=data.get('year'),
+            sem=data.get('sem'),
+            section=data.get('section'),
+            academic_year=data.get('academic_year')
+        )
 
-    question_count = int(data.get('question_count'))
-    for i in range(question_count):
-        q_text = data.get(f'q_text_{i}')
-        q_rating = data.get(f'q_rating_{i}')
-        response.questions.append(GeneralQuestionResponse(question_text=q_text, rating=q_rating))
+        question_count = int(data.get('question_count', 0))
+        for i in range(question_count):
+            q_text = data.get(f'q_text_{i}')
+            q_rating = data.get(f'q_rating_{i}')
+            response.questions.append(GeneralQuestionResponse(question_text=q_text, rating=q_rating))
 
-    subject_count = int(data.get('subject_count'))
-    for i in range(subject_count):
-        course_code = data.get(f'course_code_{i}')
-        print(f"Adding subject {i} with course code: {course_code}")  # Debug log
-        subject = SubjectFeedback(subject_name=course_code)
-        co_count = int(data.get(f'co_count_{i}'))
-        print(f"Found {co_count} COs for subject {i}")  # Debug log
+        subject_count = int(data.get('subject_count', 0))
+        print(f"Processing {subject_count} subjects")
         
-        # Initialize arrays to store CO ratings
-        co_ratings = []
-        
-        # Dictionary to store CO-wise ratings
-        co_wise_ratings = {f"CO{j+1}": [] for j in range(5)}  # Initialize for 5 COs
-        
-        for j in range(co_count):
-            co_q = data.get(f'co_q_{i}_{j}')
-            co_r = data.get(f'co_r_{i}_{j}')
-            if co_r:
-                co_rating = int(co_r)
-                co_num = j + 1
-                co_wise_ratings[f"CO{co_num}"].append(co_rating)
-            subject.co_questions.append(COFeedback(co_question=co_q, co_rating=co_r))
-        
-        # Calculate averages for each CO and overall average
-        total_sum = 0
-        valid_cos = 0
-        
-        # Calculate and store individual CO averages
-        for co_num in range(1, 6):
-            co_ratings = co_wise_ratings[f"CO{co_num}"]
-            if co_ratings:  # If we have ratings for this CO
-                co_avg = sum(co_ratings) / len(co_ratings)
-                # Set the individual CO average
-                setattr(subject, f'co{co_num}_average', round(co_avg, 2))
-                total_sum += co_avg
-                valid_cos += 1
-                print(f"Subject {course_code} CO{co_num} average: {co_avg}")  # Debug log
-        
-        # Calculate and set the overall average
-        if valid_cos > 0:
-            subject.average_rating = round(total_sum / valid_cos, 2)
-            print(f"Subject {course_code} overall average: {subject.average_rating}")  # Debug log
-        
-        response.subjects.append(subject)
+        for i in range(subject_count):
+            course_code = data.get(f'course_code_{i}')
+            print(f"Adding subject {i} with course code: {course_code}")  # Debug log
+            subject = SubjectFeedback(subject_name=course_code)
+            
+            co_count_value = data.get(f'co_count_{i}')
+            print(f"CO count value for subject {i}: {co_count_value}")
+            
+            try:
+                # Only attempt to convert to int if the value is not None
+                co_count = int(co_count_value) if co_count_value is not None else 5
+            except (ValueError, TypeError):
+                # Handle both ValueError (invalid literal) and TypeError cases
+                co_count = 5
+                print(f"Using default CO count of 5 for subject {i}")
+            print(f"Found {co_count} COs for subject {i}")
+            
+            # Initialize arrays to store CO ratings
+            co_ratings = []
+            
+            # Dictionary to store CO-wise ratings
+            co_wise_ratings = {f"CO{j+1}": [] for j in range(5)}  # Initialize for 5 COs
+            
+            for j in range(co_count):
+                co_q = data.get(f'co_q_{i}_{j}', '')  # Default to empty string if None
+                co_r = data.get(f'co_r_{i}_{j}')
+                
+                print(f"Subject {i}, CO{j+1} - Question: {co_q}, Rating: {co_r}")
+                
+                # Only try to parse the rating if it's not None and not empty
+                if co_r:
+                    try:
+                        co_rating = int(co_r)
+                        co_num = j + 1
+                        co_wise_ratings[f"CO{co_num}"].append(co_rating)
+                    except (ValueError, TypeError):
+                        print(f"Warning: Invalid rating value for CO{j+1}: {co_r}")
+                        
+                # Don't store None values in the database - convert to empty string or 0 as appropriate
+                subject.co_questions.append(COFeedback(
+                    co_question=co_q if co_q is not None else '',
+                    co_rating=int(co_r) if co_r else 0
+                ))
+            
+            # Calculate averages for each CO and overall average
+            total_sum = 0
+            valid_cos = 0
+            
+            # Calculate and store individual CO averages
+            for co_num in range(1, 6):
+                co_ratings = co_wise_ratings[f"CO{co_num}"]
+                if co_ratings:  # If we have ratings for this CO
+                    co_avg = sum(co_ratings) / len(co_ratings)
+                    # Set the individual CO average
+                    setattr(subject, f'co{co_num}_average', round(co_avg, 2))
+                    total_sum += co_avg
+                    valid_cos += 1
+                    print(f"Subject {course_code} CO{co_num} average: {co_avg}")  # Debug log
+            
+            # Calculate and set the overall average
+            if valid_cos > 0:
+                subject.average_rating = round(total_sum / valid_cos, 2)
+                print(f"Subject {course_code} overall average: {subject.average_rating}")  # Debug log
+            
+            response.subjects.append(subject)
 
-    db.session.add(response)
-    db.session.commit()
-    return redirect(url_for('index'))
+        db.session.add(response)
+        db.session.commit()
+        return redirect(url_for('index'))
+    except Exception as e:
+        app.logger.error(f"Error in submit: {str(e)}")
+        app.logger.error(f"Error details: {type(e).__name__}")
+        import traceback
+        app.logger.error(traceback.format_exc())
+        return f"An error occurred while submitting the form: {str(e)}", 500
 
 @app.route('/adminofCES')
 def admin():

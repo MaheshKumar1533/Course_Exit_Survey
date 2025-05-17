@@ -74,7 +74,7 @@ function addSubject() {
         </div>
         <div class="form-group">
             <label for="subject_name_${subjectCount}">Course Name:</label>
-            <input type="text" name="subject_name_${subjectCount}" id="subject_name_${subjectCount}" required readonly>
+            <input type="text" name="subject_name_${subjectCount}" id="subject_name_${subjectCount}" required>
         </div>
         <div id="${coContainerId}" class="co-container"></div>
         <input type="hidden" name="co_count_${subjectCount}" id="co_count_${subjectCount}" value="5">
@@ -293,33 +293,91 @@ function removeSubject(button) {
 }
 
 function updateSubmitButton() {
-    const submitButton = document.querySelector('.submit-btn');
-    const subjectsCount = document.querySelectorAll('.subject-section').length;
-    
-    if (subjectsCount < 7) {
-        submitButton.disabled = true;
-        submitButton.title = `Please add at least ${7 - subjectsCount} more subject(s)`;
-        // Add visual indication
-        submitButton.style.opacity = '0.5';
-        submitButton.style.cursor = 'not-allowed';
-    } else {
-        submitButton.disabled = false;
-        submitButton.title = '';
-        submitButton.style.opacity = '1';
-        submitButton.style.cursor = 'pointer';
-    }
+	const submitButton = document.querySelector(".submit-btn");
+	const subjectsCount = document.querySelectorAll(".subject-section").length;
+
+	if (subjectsCount < 7) {
+		submitButton.disabled = true;
+		submitButton.title = `Please add at least ${
+			7 - subjectsCount
+		} more subject(s)`;
+		// Add visual indication
+		submitButton.style.opacity = "0.5";
+		submitButton.style.cursor = "not-allowed";
+	} else {
+		submitButton.disabled = false;
+		submitButton.title = "";
+		submitButton.style.opacity = "1";
+		submitButton.style.cursor = "pointer";
+	}
 }
 
 // Add form submission validation
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.querySelector('form');
-    updateSubmitButton(); // Initial check
+document.addEventListener("DOMContentLoaded", function () {
+	const form = document.querySelector("form");
+	updateSubmitButton(); // Initial check
 
-    form.addEventListener('submit', function(event) {
-        const subjectsCount = document.querySelectorAll('.subject-section').length;
-        if (subjectsCount < 7) {
-            event.preventDefault();
-            alert(`You need to add at least ${7 - subjectsCount} more subject(s) before submitting.`);
-        }
-    });
+	form.addEventListener("submit", function (event) {
+		// Check required number of subjects
+		const subjectsCount =
+			document.querySelectorAll(".subject-section").length;
+		if (subjectsCount < 7) {
+			event.preventDefault();
+			alert(
+				`You need to add at least ${
+					7 - subjectsCount
+				} more subject(s) before submitting.`
+			);
+			return;
+		}
+
+		// Verify all subject fields have valid data
+		let hasErrors = false;
+		const subjectSections = document.querySelectorAll(".subject-section");
+
+		subjectSections.forEach((section, index) => {
+			// Ensure each subject has a course code
+			const courseCode = section.querySelector(
+				`input[name="course_code_${index}"]`
+			);
+			if (!courseCode || !courseCode.value.trim()) {
+				hasErrors = true;
+				event.preventDefault();
+				courseCode.classList.add("error-field");
+			}
+
+			// Ensure each subject has CO counts
+			const coCountField = section.querySelector(
+				`input[name="co_count_${index}"]`
+			);
+			if (!coCountField || !coCountField.value) {
+				console.log(`Setting default CO count for subject ${index}`);
+				// Set default value of 5 if not present
+				if (coCountField) coCountField.value = 5;
+			}
+
+			// Ensure CO questions have ratings selected
+			const coCount = coCountField
+				? parseInt(coCountField.value) || 5
+				: 5;
+			for (let j = 0; j < coCount; j++) {
+				const hasRating = document.querySelector(
+					`input[name="co_r_${index}_${j}"]:checked`
+				);
+				if (!hasRating) {
+					hasErrors = true;
+					event.preventDefault();
+					const ratingGroup = section.querySelector(
+						`.co-container > div:nth-child(${j + 1}) .rating-group`
+					);
+					if (ratingGroup)
+						ratingGroup.classList.add("error-highlight");
+				}
+			}
+		});
+
+		if (hasErrors) {
+			alert("Please fill in all required fields marked in red.");
+		}
+	});
 });

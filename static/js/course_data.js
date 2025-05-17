@@ -452,4 +452,48 @@
 			co5: "Implement effective UI/UX Design.",
 		},
 	},
+	{
+		coursecode: "20HUM102",
+		coursename: "Universal Human Values",
+		courseoutcomes: {
+			co1: "Understand the natural acceptance in human beings as the innate acceptance.",
+			co2: "Become more aware of themselves.",
+			co3: "Maintain harmony with family and society by recognizing harmony in human-human relationships.",
+			co4: "Seek harmony in nature and existence by realizing existence as coexistence.",
+			co5: "Act more responsibly in life and handle problems with sustainable solutions.",
+		},
+	},
+	{
+		coursecode: "20CSE606",
+		coursename: "AI Tools, Techniques and Applications",
+		courseoutcomes: {
+			co1: "Apply supervised and unsupervised machine learning techniques to solve real-world problems.",
+			co2: "Construct interactive chatbot systems and virtual assistants by leveraging speech recognition.",
+			co3: "Utilize image processing techniques to perform image labeling and face recognition.",
+			co4: "Develop regularized neural network models to solve image classification tasks.",
+			co5: "Analyze smart applications in various domains through a mini project.",
+		},
+	},
+	{
+		coursecode: "20CSE404",
+		coursename: "Web Technologies",
+		courseoutcomes: {
+			co1: "Understand about client-side and server-side communication protocols and HTML languages.",
+			co2: "Apply style sheets and client-side scripting programming in appropriate applications.",
+			co3: "Build applications using Servlet in server-side programming.",
+			co4: "Construct XML code to represent web data and apply server-side programming using JSP.",
+			co5: "Develop web applications using web services.",
+		},
+	},
+	{
+		coursecode: "20CSE403",
+		coursename: "Artificial Intelligence",
+		courseoutcomes: {
+			co1: "Discuss the techniques used for building expert systems by integrating AI to solve real-world problems.",
+			co2: "Apply appropriate uninformed search strategy to solve complex problems.",
+			co3: "Utilize suitable informed search approach to solve real world problems.",
+			co4: "Infer knowledge using suitable knowledge representation schemes for complex problems.",
+			co5: "Apply suitable reasoning strategy to draw conclusions for non-monotonic AI problems.",
+		},
+	},
 ];

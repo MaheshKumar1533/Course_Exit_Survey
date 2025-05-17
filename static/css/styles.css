@@ -815,3 +815,27 @@ hr {
 		grid-template-columns: 1fr;
 	}
 }
+
+/* Form validation error styles */
+.error-field {
+	border: 2px solid var(--error-color) !important;
+	box-shadow: 0 0 0 1px var(--error-color);
+}
+
+.error-highlight {
+	background-color: rgba(239, 68, 68, 0.1);
+	padding: 5px;
+	border-radius: var(--radius);
+	border-left: 3px solid var(--error-color);
+}
+
+.error-message {
+	color: var(--error-color);
+	font-size: 0.85rem;
+	margin-top: 5px;
+}
+
+/* Fix for radio button groups in error state */
+.rating-group.error-highlight .rating-option {
+	margin-bottom: 5px;
+}
