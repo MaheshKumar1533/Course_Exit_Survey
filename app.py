@@ -6,7 +6,7 @@ import io
 import json
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///survey.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///survey_BUILT.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
